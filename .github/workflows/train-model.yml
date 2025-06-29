@@ -30,6 +30,12 @@ jobs:
                 cd model-demo
                 python model.py
 
+            - name: Generate tag
+              id: version
+              run: |
+                VERSION="v$(date +%Y%m%D%H%M%S)"
+                echo "VERSION=$VERSION" > $GITHUB_ENV
+
             - name: Upload artifact
               uses: actions/upload-artifact@v4
               with:
