@@ -1,5 +1,8 @@
 name: Train Loan Model
 
+permissions:
+  contents: write
+
 on:
     push:
         paths:
