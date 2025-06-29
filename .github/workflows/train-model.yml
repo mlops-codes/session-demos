@@ -1,0 +1,42 @@
+name: Train Loan Model
+
+on:
+    push:
+        paths:
+            - model-demo/**
+            - .github/workflows/train-model.yml
+
+jobs: 
+    train-model:
+        runs-on: ubuntu-latest
+
+        steps: 
+            - name: Checkout
+              uses: actions/checkout@v3
+
+            - name: Setup python
+              uses: actions/setup-python@v4
+              with:
+                python-version: '3.13'
+
+            - name: Install requirements
+              run: |
+                cd model-demo
+                python -m pip install --upgrade pip
+                pip install -r requirements.txt
+
+            - name: Train model
+              run: |
+                cd model-demo
+                python model.py
+
+            - name: Upload artifact
+              uses: actions/upload-artifact@v4
+              with:
+                name: loan-model
+                path: model-demo/model.pkl
+
+
+            
+
+        
