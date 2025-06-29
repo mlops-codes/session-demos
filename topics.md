@@ -1,0 +1,19 @@
+- Git
+    - .git (Github, Bitbucket, Gitlab, AWS Code Commit)
+    - Github
+    - Branches
+        - Main/Master (Ready for Production)
+    - Commands
+    - Dev Workflows
+        - Commit
+        - Push
+        - Pull Request
+        - Approve
+    - Github Actions
+        - Workflow file
+        - Artifates
+
+- Packing Model
+    - Notebook
+    - Loan Calculator Model
+    - PKL (Pickle file) 
