@@ -10,3 +10,7 @@ Mac/Linux
 
 Create Model 
      python .\model-demo\model.py
+
+Run Streamlit App (make sure .pkl is present)
+    cd model-demo
+    streamlit run .\loan_app.py
