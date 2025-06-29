@@ -36,19 +36,26 @@ jobs:
                 name: loan-model
                 path: model-demo/model.pkl
 
-            - name: Create release
+            - name: Create GitHub Release
+              id: create_release
               uses: actions/create-release@v1
               env: 
                 GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-              with: 
-                tag_name: ${{ github.ref_name }}
-                release_name: ${{github.ref_name}}
-
-            - name: Upload release
-              uses: softprops/action-gh-release@v1
               with:
-                  files: model-demo/model.pkl
+                tag_name: ${{env.VERSION}}
+                release_name: "Release ${{env.VERSION}}"
+                body: "Automated release"
+          
 
+            - name: Upload version file
+              uses: actions/upload-release-asset@v1
+              env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                upload_url: ${{ steps.create_release.outputs.upload_url }}
+                asset_path: model-demo/model.pkl
+                asset_name: model.pkl
+                asset_content_type: application/octet-stream
             
 
         
