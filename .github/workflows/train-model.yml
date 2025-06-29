@@ -1,0 +1,71 @@
+name: Train Loan Model
+
+permissions:
+  contents: write
+
+on:
+    push:
+        branches: [main]
+        # paths:
+        #     - model-demo/**
+        #     - .github/workflows/train-model.yml
+
+jobs: 
+    train-model:
+        runs-on: ubuntu-latest
+
+        steps: 
+            - name: Checkout
+              uses: actions/checkout@v3
+
+            - name: Setup python
+              uses: actions/setup-python@v4
+              with:
+                python-version: '3.13'
+
+            - name: Install requirements
+              run: |
+                cd model-demo
+                python -m pip install --upgrade pip
+                pip install -r requirements.txt
+
+            - name: Train model
+              run: |
+                cd model-demo
+                python model.py
+
+            - name: Generate tag
+              id: version
+              run: |
+                VERSION="v$(date +%Y%m%D%H%M%S)"
+                echo "VERSION=$VERSION" > $GITHUB_ENV
+
+            - name: Upload artifact
+              uses: actions/upload-artifact@v4
+              with:
+                name: loan-model
+                path: model-demo/model.pkl
+
+            - name: Create GitHub Release
+              id: create_release
+              uses: actions/create-release@v1
+              env: 
+                GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+              with:
+                tag_name: ${{env.VERSION}}
+                release_name: "Release ${{env.VERSION}}"
+                body: "Automated release"
+          
+
+            - name: Upload version file
+              uses: actions/upload-release-asset@v1
+              env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                upload_url: ${{ steps.create_release.outputs.upload_url }}
+                asset_path: model-demo/model.pkl
+                asset_name: model.pkl
+                asset_content_type: application/octet-stream
+            
+
+        
