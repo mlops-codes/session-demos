@@ -54,7 +54,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: 3.12
+        python-version: ${{ env.PYTHON_VERSION }}
         
     - name: Cache Python dependencies
       uses: actions/cache@v3
@@ -175,7 +175,6 @@ jobs:
           
     - name: Install dependencies
       run: |
-        cd mlflow
         pip install --upgrade pip
         pip install -r requirements.txt
         
@@ -214,7 +213,7 @@ jobs:
         cd mlflow
         
         # Create enhanced pipeline script that can be controlled via environment variables
-        cat > run_pipeline_cicd.py << 'EOF'
+        cat > pipeline.py << 'EOF'
         import os
         import sys
         import json
@@ -285,10 +284,12 @@ jobs:
                     json.dump(cicd_summary, f, indent=2)
                 
                 # Output for GitHub Actions
-                print(f"::set-output name=status::{pipeline_status}")
-                print(f"::set-output name=best-accuracy::{best_accuracy}")
-                print(f"::set-output name=deployment-ready::{cicd_summary['deployment_ready']}")
-                print(f"::set-output name=quality-gate-passed::{quality_gate_passed}")
+                import os
+                with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                    f.write(f"status={pipeline_status}\n")
+                    f.write(f"best-accuracy={best_accuracy}\n")
+                    f.write(f"deployment-ready={cicd_summary['deployment_ready']}\n")
+                    f.write(f"quality-gate-passed={quality_gate_passed}\n")
                 
                 # Exit with error if quality gate failed
                 if not quality_gate_passed:
@@ -310,8 +311,10 @@ jobs:
                 with open("cicd_pipeline_summary.json", "w") as f:
                     json.dump(error_summary, f, indent=2)
                 
-                print(f"::set-output name=status::failed")
-                print(f"::set-output name=deployment-ready::false")
+                import os
+                with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                    f.write(f"status=failed\n")
+                    f.write(f"deployment-ready=false\n")
                 sys.exit(1)
             
             finally:
@@ -369,7 +372,6 @@ jobs:
         
     - name: Install dependencies
       run: |
-        cd mlflow
         pip install --upgrade pip
         pip install -r requirements.txt
         
