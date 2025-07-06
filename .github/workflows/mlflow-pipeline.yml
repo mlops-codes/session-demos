@@ -340,7 +340,7 @@ jobs:
         python run_pipeline_cicd.py
         
     - name: Upload pipeline artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: pipeline-artifacts-${{ needs.setup-and-validate.outputs.environment }}
@@ -350,7 +350,7 @@ jobs:
         retention-days: 30
         
     - name: Upload pipeline logs
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: pipeline-logs-${{ needs.setup-and-validate.outputs.environment }}
@@ -499,7 +499,7 @@ jobs:
         cat deployment_manifest.json
         
     - name: Upload deployment package
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: deployment-package-${{ needs.setup-and-validate.outputs.environment }}
         path: |
