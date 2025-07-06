@@ -33,7 +33,7 @@ on:
         type: boolean
 
 env:
-  MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI || 'sqlite:///mlflow.db' }}
+  MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI || 'file:./mlruns' }}
   MLFLOW_EXPERIMENT_NAME: end_to_end_pipeline_cicd
   PYTHON_VERSION: '3.11'
 
@@ -65,9 +65,10 @@ jobs:
           ${{ runner.os }}-pip-
           
     - name: Install dependencies
+      timeout-minutes: 10
       run: |
         pip install --upgrade pip
-        pip install -r requirements.txt
+        pip install -r requirements.txt --timeout 300
         
     - name: Determine environment
       id: set-env
@@ -104,7 +105,7 @@ jobs:
         if [ "${{ github.event.inputs.force_run }}" = "true" ]; then
           echo "should-run=true" >> $GITHUB_OUTPUT
           echo "Pipeline forced by user input"
-        elif git diff --name-only HEAD~1 HEAD | grep -E "(pipeline|requirements)" > /dev/null 2>&1 || [ "${{ github.event_name }}" = "pull_request" ]; then
+        elif [ "${{ github.event_name }}" = "pull_request" ] || [ "${{ github.event_name }}" = "push" ]; then
           echo "should-run=true" >> $GITHUB_OUTPUT
           echo "Pipeline needed due to code changes"
         elif [ "${{ github.ref }}" = "refs/heads/main" ]; then
@@ -116,25 +117,25 @@ jobs:
         fi
         
     - name: Validate MLflow connection
+      timeout-minutes: 2
       run: |
-        cd mlflow
         python -c "
         import mlflow
-        from mlflow.tracking import MlflowClient
+        import os
+        import tempfile
         
-        print('MLflow Tracking URI:', mlflow.get_tracking_uri())
-        client = MlflowClient()
-        print('✅ MLflow connection successful')
+        # Set up local tracking for CI/CD
+        tracking_uri = os.getenv('MLFLOW_TRACKING_URI', 'file:///tmp/mlflow_cicd')
+        mlflow.set_tracking_uri(tracking_uri)
+        print(f'MLflow Tracking URI: {mlflow.get_tracking_uri()}')
         
-        # Test experiment creation
-        experiment_name = 'cicd_validation_test'
+        # Simple validation - just check if we can import and set experiment
         try:
-            experiment = mlflow.get_experiment_by_name(experiment_name)
-            if experiment is None:
-                mlflow.create_experiment(experiment_name)
-            print('✅ Experiment access successful')
+            mlflow.set_experiment('cicd_validation_test')
+            print('✅ MLflow validation successful')
         except Exception as e:
-            print(f'⚠️ Experiment creation failed: {e}')
+            print(f'⚠️ MLflow validation failed: {e}')
+            print('Continuing with pipeline...')
         "
         
     - name: Pipeline configuration summary
@@ -174,9 +175,10 @@ jobs:
           ${{ runner.os }}-pip-
           
     - name: Install dependencies
+      timeout-minutes: 10
       run: |
         pip install --upgrade pip
-        pip install -r requirements.txt
+        pip install -r requirements.txt --timeout 300
         
     - name: Set environment-specific parameters
       run: |
@@ -209,11 +211,12 @@ jobs:
         
     - name: Execute end-to-end pipeline
       id: pipeline-execution
+      timeout-minutes: 30
       run: |
         cd mlflow
         
         # Create enhanced pipeline script that can be controlled via environment variables
-        cat > pipeline.py << 'EOF'
+        cat > run_pipeline_cicd.py << 'EOF'
         import os
         import sys
         import json
@@ -371,9 +374,10 @@ jobs:
         python-version: ${{ env.PYTHON_VERSION }}
         
     - name: Install dependencies
+      timeout-minutes: 10
       run: |
         pip install --upgrade pip
-        pip install -r requirements.txt
+        pip install -r requirements.txt --timeout 300
         
     - name: Download pipeline artifacts
       uses: actions/download-artifact@v3
