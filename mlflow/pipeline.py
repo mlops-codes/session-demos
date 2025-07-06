@@ -23,6 +23,8 @@ class MLflowPipeline:
         self.pipeline_run_id = None
         self.artifacts_dir = "pipeline_artifacts"
         os.makedirs(self.artifacts_dir, exist_ok=True)
+
+    mlflow.set_tracking_uri("https://dagshub.com/frontenddevtrainer/MLOps.mlflow")
         
     def stage_1_data_preparation(self):
         """Stage 1: Data Generation and Preparation"""
