@@ -3,8 +3,6 @@ name: MLflow End-to-End Pipeline CI/CD
 on:
   push:
     branches: [ session-4 ]
-    paths:
-      - 'mlflow/**'
   workflow_dispatch:
     inputs:
       environment:
