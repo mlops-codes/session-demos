@@ -17,3 +17,30 @@
     - Notebook
     - Loan Calculator Model
     - PKL (Pickle file) 
+
+
+Session - 3
+--------------------------------------------
+Loan Apporval Model - Completed.
+    Import Data
+    Preprocess / Cleanup
+    Train model
+    Save Model
+    Model Testing 
+    Model Eval
+    Prediction  
+
+Iris Model
+    Load Data
+    ++++
+    Prediction
+    Model > FastAPI Package (RestAPI)
+    Test > FastAPI
+
+Iris 
+++++
+Model 
+Docker Image
+Container > FastAPI Package (RestAPI)
+
+
