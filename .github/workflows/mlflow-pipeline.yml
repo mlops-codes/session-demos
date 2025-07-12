@@ -229,7 +229,7 @@ jobs:
         export PIPELINE_ID="${{ env.PIPELINE_ID }}"
         
         # Run the pipeline using helper script
-        python ../pipeline-helpers/cicd_pipeline_runner.py
+        python ./pipeline-helpers/cicd_pipeline_runner.py
         
     - name: Upload pipeline artifacts
       uses: actions/upload-artifact@v4
