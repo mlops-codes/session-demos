@@ -4,11 +4,11 @@ on:
   push:
     branches: [ main, develop ]
     paths:
-      - 'session-4/demo5-end-to-end-pipeline/**'
+      - 'demo-4/demo5-end-to-end-pipeline/**'
   pull_request:
     branches: [ main ]
     paths:
-      - 'session-4/demo5-end-to-end-pipeline/**'
+      - 'demo-4/demo5-end-to-end-pipeline/**'
   workflow_dispatch:
 
 env:
@@ -30,19 +30,19 @@ jobs:
         
     - name: Install dependencies
       run: |
-        cd session-4/demo5-end-to-end-pipeline
+        cd demo-4/demo5-end-to-end-pipeline
         pip install --upgrade pip
         pip install -r requirements.txt
         
     - name: Test pipeline functionality
       run: |
-        cd session-4/demo5-end-to-end-pipeline
+        cd demo-4/demo5-end-to-end-pipeline
         python test_pipeline.py
         
     - name: Run full pipeline
       if: github.ref == 'refs/heads/main'
       run: |
-        cd session-4/demo5-end-to-end-pipeline
+        cd demo-4/demo5-end-to-end-pipeline
         python pipeline.py
         
     - name: Upload artifacts
@@ -51,5 +51,5 @@ jobs:
       with:
         name: pipeline-artifacts
         path: |
-          session-4/demo5-end-to-end-pipeline/pipeline_artifacts/
+          demo-4/demo5-end-to-end-pipeline/pipeline_artifacts/
         retention-days: 7

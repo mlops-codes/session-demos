@@ -4,11 +4,11 @@ on:
   push:
     branches: [ main, develop, staging ]
     paths:
-      - 'session-4/demo5-end-to-end-pipeline/**'
+      - 'demo-4/demo5-end-to-end-pipeline/**'
   pull_request:
     branches: [ main ]
     paths:
-      - 'session-4/demo5-end-to-end-pipeline/**'
+      - 'demo-4/demo5-end-to-end-pipeline/**'
   workflow_dispatch:
     inputs:
       environment:
@@ -66,14 +66,14 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('session-4/requirements.txt') }}
+        key: ${{ runner.os }}-pip-${{ hashFiles('demo-4/requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
           
     - name: Install dependencies
       timeout-minutes: 10
       run: |
-        cd session-4
+        cd demo-4
         pip install --upgrade pip
         pip install -r requirements.txt --timeout 300
         
@@ -126,7 +126,7 @@ jobs:
     - name: Validate MLflow connection
       timeout-minutes: 2
       run: |
-        cd session-4/demo5-end-to-end-pipeline
+        cd demo-4/demo5-end-to-end-pipeline
         python -c "
         import mlflow
         import os
@@ -178,14 +178,14 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('session-4/requirements.txt') }}
+        key: ${{ runner.os }}-pip-${{ hashFiles('demo-4/requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
           
     - name: Install dependencies
       timeout-minutes: 10
       run: |
-        cd session-4
+        cd demo-4
         pip install --upgrade pip
         pip install -r requirements.txt --timeout 300
         
@@ -222,7 +222,7 @@ jobs:
       id: pipeline-execution
       timeout-minutes: 30
       run: |
-        cd session-4/demo5-end-to-end-pipeline
+        cd demo-4/demo5-end-to-end-pipeline
         
         # Create enhanced pipeline script that can be controlled via environment variables
         cat > run_pipeline_cicd.py << 'EOF'
@@ -354,8 +354,8 @@ jobs:
       with:
         name: pipeline-artifacts-${{ needs.setup-and-validate.outputs.environment }}
         path: |
-          session-4/demo5-end-to-end-pipeline/pipeline_artifacts/
-          session-4/demo5-end-to-end-pipeline/cicd_pipeline_summary.json
+          demo-4/demo5-end-to-end-pipeline/pipeline_artifacts/
+          demo-4/demo5-end-to-end-pipeline/cicd_pipeline_summary.json
         retention-days: 30
         
     - name: Upload pipeline logs
@@ -364,7 +364,7 @@ jobs:
       with:
         name: pipeline-logs-${{ needs.setup-and-validate.outputs.environment }}
         path: |
-          session-4/demo5-end-to-end-pipeline/*.log
+          demo-4/demo5-end-to-end-pipeline/*.log
         retention-days: 7
 
   validate-pipeline-output:
@@ -385,7 +385,7 @@ jobs:
     - name: Install dependencies
       timeout-minutes: 10
       run: |
-        cd session-4
+        cd demo-4
         pip install --upgrade pip
         pip install -r requirements.txt --timeout 300
         

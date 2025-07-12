@@ -4,7 +4,7 @@ on:
   push:
     branches: [ main, develop ]
     paths:
-      - 'session-4/demo5-end-to-end-pipeline/**'
+      - 'demo-4/demo5-end-to-end-pipeline/**'
   pull_request:
     branches: [ main ]
   workflow_dispatch:
@@ -79,7 +79,7 @@ jobs:
     - name: Install dependencies
       timeout-minutes: 5
       run: |
-        cd session-4/demo5-end-to-end-pipeline
+        cd demo-4/demo5-end-to-end-pipeline
         pip install --upgrade pip
         pip install -r requirements.txt
         
@@ -90,7 +90,7 @@ jobs:
         N_SAMPLES: 500
         MIN_ACCURACY_THRESHOLD: 0.75
       run: |
-        cd session-4/demo5-end-to-end-pipeline
+        cd demo-4/demo5-end-to-end-pipeline
         python test_pipeline.py
         
     - name: Run full pipeline
@@ -101,7 +101,7 @@ jobs:
         N_SAMPLES: 2000
         MIN_ACCURACY_THRESHOLD: 0.85
       run: |
-        cd session-4/demo5-end-to-end-pipeline
+        cd demo-4/demo5-end-to-end-pipeline
         python pipeline.py
         
     - name: Upload artifacts
@@ -110,8 +110,8 @@ jobs:
       with:
         name: pipeline-results
         path: |
-          session-4/demo5-end-to-end-pipeline/pipeline_artifacts/
-          session-4/demo5-end-to-end-pipeline/mlruns/
+          demo-4/demo5-end-to-end-pipeline/pipeline_artifacts/
+          demo-4/demo5-end-to-end-pipeline/mlruns/
         retention-days: 7
         
     - name: Summary

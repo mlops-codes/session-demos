@@ -2,11 +2,11 @@ name: End-to-End Pipeline CI/CD
 
 on:
   push:
-    branches: [ session-4 ]
+    branches: [ demo-4 ]
     paths:
       - 'demo-4/**'
   pull_request:
-    branches: [ session-4 ]
+    branches: [ demo-4 ]
     paths:
       - 'demo-4/**'
   workflow_dispatch:
@@ -66,14 +66,14 @@ jobs:
       uses: actions/cache@v4
       with:
         path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('session-4/requirements.txt') }}
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
           
     - name: Install dependencies
       timeout-minutes: 10
       run: |
-        cd session-4
+        cd demo-4
         pip install --upgrade pip
         pip install -r requirements.txt --timeout 300
         
@@ -178,14 +178,14 @@ jobs:
       uses: actions/cache@v4
       with:
         path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('session-4/requirements.txt') }}
+        key: ${{ runner.os }}-pip-${{ hashFiles('demo-4/requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
           
     - name: Install dependencies
       timeout-minutes: 10
       run: |
-        cd session-4
+        cd demo-4
         pip install --upgrade pip
         pip install -r requirements.txt --timeout 300
         
@@ -268,7 +268,7 @@ jobs:
     - name: Install dependencies
       timeout-minutes: 10
       run: |
-        cd session-4
+        cd demo-4
         pip install --upgrade pip
         pip install -r requirements.txt --timeout 300
         

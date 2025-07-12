@@ -30,7 +30,7 @@ This demo showcases a complete end-to-end ML pipeline using MLflow with comprehe
 ### 1. Install Dependencies
 
 ```bash
-cd session-4/demo5-end-to-end-pipeline
+cd demo-4/demo5-end-to-end-pipeline
 pip install -r requirements.txt
 ```
 

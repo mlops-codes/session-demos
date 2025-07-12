@@ -20,12 +20,12 @@ jobs:
         
     - name: Check directory structure
       run: |
-        ls -la session-4/
-        ls -la session-4/demo5-end-to-end-pipeline/
+        ls -la demo-4/
+        ls -la demo-4/demo5-end-to-end-pipeline/
         
     - name: Check requirements
       run: |
-        cat session-4/demo5-end-to-end-pipeline/requirements.txt
+        cat demo-4/demo5-end-to-end-pipeline/requirements.txt
         
     - name: Test basic pip install
       timeout-minutes: 2
@@ -39,7 +39,7 @@ jobs:
         
     - name: Test file operations
       run: |
-        cd session-4/demo5-end-to-end-pipeline
+        cd demo-4/demo5-end-to-end-pipeline
         python -c "
         import os
         print('Current directory:', os.getcwd())
