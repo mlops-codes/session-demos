@@ -2,7 +2,7 @@
 """
 SageMaker Model Deployment Script for Flight Delay Prediction Model
 
-This script deploys a trained pickle model to Amazon SageMaker for real-time inference.
+This script deploys a trained pickle model to Amazon SageMaker for -time inference.
 """
 
 import boto3

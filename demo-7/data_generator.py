@@ -318,10 +318,6 @@ def main():
         for dataset, path in file_paths.items():
             print(f"   • {dataset}: {path}")
         
-        print(f"\n💡 Next steps:")
-        print(f"   1. Run: python 1-feature-store-setup/ingest_data.py")
-        print(f"   2. Explore data with: python 2-feature-engineering/feature_processor.py")
-        
         return True
         
     except Exception as e:

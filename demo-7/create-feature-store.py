@@ -105,12 +105,7 @@ class FeatureStoreManager:
                     'S3StorageConfig': {
                         'S3Uri': self.config.get_s3_uri(f'offline-store/{feature_group_name}'),
                     },
-                    'DisableGlueTableCreation': True,
-                    'DataCatalogConfig': {
-                        'TableName': feature_group_name.replace('-', '_'),
-                        'Catalog': 'AwsDataCatalog',
-                        'Database': self.config.DATABASE_NAME
-                    }
+                    'DisableGlueTableCreation': False,
                 }
                 logger.info(f"   💾 Enabling offline store")
             

@@ -453,7 +453,7 @@ jobs:
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "**⚠️ This deployment will:**" >> $GITHUB_STEP_SUMMARY
         echo "- Deploy the model to AWS SageMaker" >> $GITHUB_STEP_SUMMARY
-        echo "- Create a SageMaker endpoint for real-time inference" >> $GITHUB_STEP_SUMMARY
+        echo "- Create a SageMaker endpoint for -time inference" >> $GITHUB_STEP_SUMMARY
         echo "- Replace any existing production model" >> $GITHUB_STEP_SUMMARY
         echo "- Incur AWS costs for the endpoint" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
