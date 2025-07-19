@@ -1,0 +1,15 @@
+2025/07/19 03:26:52 WARNING mlflow.models.model: Model logged without a signature and input example. Please set `input_example` parameter when logging the model to auto infer the model signature.
+2025/07/19 03:26:54 INFO mlflow.tracking._tracking_service.client: 🏃 View run random-forest-training at: https://westeurope.api.azureml.ms/mlflow/v2.0/subscriptions/3fc7fd13-533e-40a7-8e3d-f1fbf4204436/resourceGroups/edu-demo/providers/Microsoft.MachineLearningServices/workspaces/edu-demo/#/experiments/37334017-158f-4a1a-ab4a-507f7a4ff75e/runs/silver_knee_7bhcyl7021.
+2025/07/19 03:26:54 INFO mlflow.tracking._tracking_service.client: 🧪 View experiment at: https://westeurope.api.azureml.ms/mlflow/v2.0/subscriptions/3fc7fd13-533e-40a7-8e3d-f1fbf4204436/resourceGroups/edu-demo/providers/Microsoft.MachineLearningServices/workspaces/edu-demo/#/experiments/37334017-158f-4a1a-ab4a-507f7a4ff75e.
+Starting model training...
+Loading training data from: /mnt/azureml/cr/j/a1deb37b8eb94031bbc64b7696dcea31/cap/data-capability/wd/INPUT_train_data/train_data.csv
+Loading test data from: /mnt/azureml/cr/j/a1deb37b8eb94031bbc64b7696dcea31/cap/data-capability/wd/INPUT_test_data/test_data.csv
+Loaded 8000 training samples and 2000 test samples
+Created random_forest model
+Training model...
+
+Training completed successfully!
+Model saved to: ./outputs/model.pkl
+Test Accuracy: 0.9365
+Test F1 Score: 0.9363
+Test AUC: 0.9809
