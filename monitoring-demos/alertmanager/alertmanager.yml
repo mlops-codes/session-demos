@@ -1,0 +1,49 @@
+global:
+  smtp_smarthost: 'localhost:587'
+  smtp_from: 'alertmanager@localhost'
+  resolve_timeout: 5m
+
+route:
+  group_by: ['alertname', 'service']
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 1h
+  receiver: 'web.hook'
+  routes:
+    - match:
+        severity: critical
+      receiver: 'critical-alerts'
+    - match:
+        service: ml-model
+      receiver: 'ml-model-alerts'
+    - match:
+        alertname: DataDriftDetected
+      receiver: 'data-drift-alerts'
+
+receivers:
+  - name: 'web.hook'
+    webhook_configs:
+      - url: 'http://localhost:5001/webhook'
+        send_resolved: true
+
+  - name: 'critical-alerts'
+    webhook_configs:
+      - url: 'http://localhost:5001/webhook/critical'
+        send_resolved: true
+
+  - name: 'ml-model-alerts'
+    webhook_configs:
+      - url: 'http://localhost:5001/webhook/ml-model'
+        send_resolved: true
+
+  - name: 'data-drift-alerts'
+    webhook_configs:
+      - url: 'http://localhost:5001/webhook/data-drift'
+        send_resolved: true
+
+inhibit_rules:
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    equal: ['alertname', 'dev', 'instance']

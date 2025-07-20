@@ -1,0 +1,154 @@
+groups:
+  - name: ml_model_health
+    rules:
+      # Model Service Availability
+      - alert: MLModelDown
+        expr: up{job="ml-model"} == 0
+        for: 30s
+        labels:
+          severity: critical
+          service: ml-model
+        annotations:
+          summary: "ML Model service is down"
+          description: "The ML model service has been down for more than 30 seconds"
+          recommendation: "Check container logs and restart service if needed"
+
+      # High Error Rate
+      - alert: HighErrorRate
+        expr: rate(ml_model_errors_total[5m]) / rate(ml_model_requests_total[5m]) > 0.05
+        for: 2m
+        labels:
+          severity: warning
+          service: ml-model
+        annotations:
+          summary: "High error rate detected"
+          description: "Error rate is {{ $value | humanizePercentage }} over the last 5 minutes"
+          value: "{{ $value | humanizePercentage }}"
+          recommendation: "Investigate error logs and check model health"
+
+      # High Response Time
+      - alert: HighLatency
+        expr: histogram_quantile(0.95, ml_model_request_duration_seconds_bucket{endpoint="/predict"}) > 1.0
+        for: 5m
+        labels:
+          severity: warning
+          service: ml-model
+        annotations:
+          summary: "High prediction latency detected"
+          description: "95th percentile latency is {{ $value }}s for predictions"
+          value: "{{ $value }}s"
+          recommendation: "Check model performance and server resources"
+
+  - name: ml_model_performance
+    rules:
+      # Model Accuracy Drop
+      - alert: ModelAccuracyDrop
+        expr: ml_model_accuracy < 0.85
+        for: 1m
+        labels:
+          severity: critical
+          service: ml-model
+        annotations:
+          summary: "Model accuracy has dropped significantly"
+          description: "Model accuracy is {{ $value | humanizePercentage }}, below 85% threshold"
+          value: "{{ $value | humanizePercentage }}"
+          recommendation: "Investigate data quality and consider model retraining"
+
+      # Low Prediction Confidence
+      - alert: LowPredictionConfidence
+        expr: histogram_quantile(0.5, ml_model_prediction_confidence_bucket) < 0.6
+        for: 5m
+        labels:
+          severity: warning
+          service: ml-model
+        annotations:
+          summary: "Median prediction confidence is low"
+          description: "Median prediction confidence is {{ $value | humanizePercentage }}"
+          value: "{{ $value | humanizePercentage }}"
+          recommendation: "Review input data quality and model performance"
+
+  - name: data_drift_detection
+    rules:
+      # Data Drift - KS Test
+      - alert: DataDriftDetected
+        expr: ml_model_ks_statistic > 0.1
+        for: 2m
+        labels:
+          severity: warning
+          service: ml-model
+          drift_type: statistical
+        annotations:
+          summary: "Statistical data drift detected"
+          description: "KS statistic is {{ $value }} for feature {{ $labels.feature_index }}"
+          value: "{{ $value }}"
+          feature: "{{ $labels.feature_index }}"
+          recommendation: "Investigate feature distribution changes and consider model retraining"
+
+      # Severe Data Drift - PSI
+      - alert: SevereDataDrift
+        expr: ml_model_psi_score > 0.25
+        for: 1m
+        labels:
+          severity: critical
+          service: ml-model
+          drift_type: distribution
+        annotations:
+          summary: "Severe data drift detected via PSI"
+          description: "PSI score is {{ $value }} for feature {{ $labels.feature_index }}, indicating significant drift"
+          value: "{{ $value }}"
+          feature: "{{ $labels.feature_index }}"
+          recommendation: "Immediate attention required - significant distribution change detected"
+
+      # Data Quality Issues
+      - alert: DataQualityDegraded
+        expr: ml_model_data_quality < 0.95
+        for: 3m
+        labels:
+          severity: warning
+          service: ml-model
+        annotations:
+          summary: "Data quality has degraded"
+          description: "Data quality score is {{ $value | humanizePercentage }}"
+          value: "{{ $value | humanizePercentage }}"
+          recommendation: "Check for missing values, outliers, or malformed inputs"
+
+  - name: operational_health
+    rules:
+      # High Memory Usage (if available)
+      - alert: HighMemoryUsage
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) > 0.90
+        for: 5m
+        labels:
+          severity: warning
+          service: infrastructure
+        annotations:
+          summary: "High memory usage detected"
+          description: "Memory usage is {{ $value | humanizePercentage }}"
+          value: "{{ $value | humanizePercentage }}"
+          recommendation: "Check for memory leaks or scale resources"
+
+      # Too Many Active Connections
+      - alert: TooManyConnections
+        expr: ml_model_active_connections > 10
+        for: 2m
+        labels:
+          severity: warning
+          service: ml-model
+        annotations:
+          summary: "High number of active connections"
+          description: "Currently {{ $value }} active connections"
+          value: "{{ $value }}"
+          recommendation: "Monitor for potential DDoS or investigate connection pooling"
+
+      # Prediction Volume Anomaly
+      - alert: UnusualPredictionVolume
+        expr: rate(ml_model_predictions_total[1h]) > 100 or rate(ml_model_predictions_total[1h]) < 0.1
+        for: 10m
+        labels:
+          severity: info
+          service: ml-model
+        annotations:
+          summary: "Unusual prediction volume detected"
+          description: "Prediction rate is {{ $value }} predictions/second over the last hour"
+          value: "{{ $value }}"
+          recommendation: "Investigate traffic patterns or potential issues"

@@ -1,0 +1,35 @@
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: kubeflow-azure-file-pv
+spec:
+  capacity:
+    storage: 100Gi
+  accessModes:
+    - ReadWriteMany
+  azureFile:
+    secretName: azure-storage-secret
+    shareName: kubeflow-storage
+    readOnly: false
+  mountOptions:
+  - dir_mode=0777
+  - file_mode=0777
+  - uid=1000
+  - gid=1000
+  - mfsymlinks
+  - nobrl
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: kubeflow-azure-file-pvc
+  namespace: kubeflow
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ""
+  resources:
+    requests:
+      storage: 100Gi
+  volumeName: kubeflow-azure-file-pv
