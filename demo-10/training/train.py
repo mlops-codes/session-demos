@@ -14,6 +14,11 @@ from datetime import datetime
 import json
 import logging
 
+import mlflow
+import mlflow.sklearn
+
+
+
 # Add parent directory to path for imports
 import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
@@ -51,46 +56,55 @@ class McDonaldsModelTrainer:
                           X_test: np.ndarray, y_test: np.ndarray, model_name: str) -> dict:
         """Train a single model and return metrics"""
         logger.info(f"Training {model_name}...")
+
+        with mlflow.start_run(run_name=f"{model_name}_{datetime.now()}"):
         
-        # Train model
-        model.fit(X_train, y_train)
-        
-        # Make predictions
-        y_train_pred = model.predict(X_train)
-        y_test_pred = model.predict(X_test)
-        
-        # Calculate metrics
-        train_mse = mean_squared_error(y_train, y_train_pred)
-        test_mse = mean_squared_error(y_test, y_test_pred)
-        train_r2 = r2_score(y_train, y_train_pred)
-        test_r2 = r2_score(y_test, y_test_pred)
-        train_mae = mean_absolute_error(y_train, y_train_pred)
-        test_mae = mean_absolute_error(y_test, y_test_pred)
-        
-        # Cross-validation score
-        try:
-            cv_scores = cross_val_score(model, X_train, y_train, cv=3, scoring='r2')
-            cv_mean = cv_scores.mean()
-            cv_std = cv_scores.std()
-        except:
-            cv_mean = 0.0
-            cv_std = 0.0
-        
-        metrics = {
-            'model_name': model_name,
-            'train_mse': train_mse,
-            'test_mse': test_mse,
-            'train_r2': train_r2,
-            'test_r2': test_r2,
-            'train_mae': train_mae,
-            'test_mae': test_mae,
-            'cv_r2_mean': cv_mean,
-            'cv_r2_std': cv_std
-        }
-        
-        logger.info(f"{model_name} - Test R2: {test_r2:.4f}, Test MSE: {test_mse:.4f}")
-        
-        return model, metrics
+
+            mlflow.log_params(model.get_params())
+
+            # Train model
+            model.fit(X_train, y_train)
+            
+            # Make predictions
+            y_train_pred = model.predict(X_train)
+            y_test_pred = model.predict(X_test)
+            
+            # Calculate metrics
+            train_mse = mean_squared_error(y_train, y_train_pred)
+            test_mse = mean_squared_error(y_test, y_test_pred)
+            train_r2 = r2_score(y_train, y_train_pred)
+            test_r2 = r2_score(y_test, y_test_pred)
+            train_mae = mean_absolute_error(y_train, y_train_pred)
+            test_mae = mean_absolute_error(y_test, y_test_pred)
+            
+            # Cross-validation score
+            try:
+                cv_scores = cross_val_score(model, X_train, y_train, cv=3, scoring='r2')
+                cv_mean = cv_scores.mean()
+                cv_std = cv_scores.std()
+            except:
+                cv_mean = 0.0
+                cv_std = 0.0
+            
+            metrics = {
+                'model_name': model_name,
+                'train_mse': train_mse,
+                'test_mse': test_mse,
+                'train_r2': train_r2,
+                'test_r2': test_r2,
+                'train_mae': train_mae,
+                'test_mae': test_mae,
+                'cv_r2_mean': cv_mean,
+                'cv_r2_std': cv_std
+            }
+
+            mlflow.log_metrics(metrics)
+            
+            logger.info(f"{model_name} - Test R2: {test_r2:.4f}, Test MSE: {test_mse:.4f}")
+            
+            mlflow.sklearn.log_model(model, model_name)
+
+            return model, metrics
     
     def train_all_models(self, X_train: np.ndarray, y_train: np.ndarray,
                         X_test: np.ndarray, y_test: np.ndarray) -> dict:
